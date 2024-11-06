@@ -11,6 +11,7 @@ SOURCES = main.c system_stm32f30x.c
 SOURCES += $(STM_LIB_DIR)/Libraries/CMSIS/Device/ST/STM32F30x/Source/Templates/TrueSTUDIO/startup_stm32f30x.s
 SOURCES += stm32f30x_rcc.c
 SOURCES += stm32f30x_gpio.c
+SOURCES += stm32f30x_i2c.c
 OBJECTS = $(SRCS:.c=.o)
 TARGET  = headlights
 

@@ -8,7 +8,31 @@
 #define PCA9685_MODE1_AI_BIT         5           // datasheet page no 14/52
 #define PCA9685_MODE1_RESTART_BIT    7           // datasheet page no 14/52
 
-uint8_t i2c_buffer;
+uint8_t i2c_buffer[256];
+void i2c_init();
+void gpio_common_init();
+void gpio_for_i2c_init();
+void i2c_read(uint8_t device_address, uint8_t device_register, uint8_t *buffer, uint8_t size);
+void i2c_write(uint8_t device_address, uint8_t device_register, uint8_t *buffer, uint8_t size);
+
+int main(void)
+{
+    i2c_init();
+    gpio_for_i2c_init();
+    gpio_common_init();
+
+    while (1) {
+        i2c_read(PCA9685_ADDRESS, PCA9685_MODE1, i2c_buffer, 1);
+
+        if (0 != i2c_buffer[0]) {
+            GPIO_SetBits(GPIOE, GPIO_Pin_8);
+        } else if (1 != i2c_buffer[0]) {
+            GPIO_SetBits(GPIOE, GPIO_Pin_11);
+        }
+    }
+
+    return 0;
+}
 
 void i2c_init()
 {
@@ -70,13 +94,13 @@ void gpio_for_i2c_init()
 void i2c_read(uint8_t device_address, uint8_t device_register, uint8_t *buffer, uint8_t size) 
 {
     // Check whether the I2C bus is idle
-    while(I2C_GetFlagStatus(I2C1, I2C_FLAG_BUSY));
+    while (I2C_GetFlagStatus(I2C1, I2C_FLAG_BUSY));
 
     I2C_TransferHandling(I2C1, device_address, 1, I2C_SoftEnd_Mode, I2C_Generate_Start_Write);
 
     // Waiting for TXDR register is empty
     // And the data to be transmitted may be written to TXDR
-    while(I2C_GetFlagStatus(I2C1, I2C_ISR_TXIS) == RESET);
+    while (I2C_GetFlagStatus(I2C1, I2C_ISR_TXIS) == RESET);
 
     // Send slave register address the info is need to be read from
     I2C_SendData(I2C1, device_register);
@@ -87,32 +111,49 @@ void i2c_read(uint8_t device_address, uint8_t device_register, uint8_t *buffer, 
     while (I2C_GetFlagStatus(I2C1, I2C_FLAG_TC) == RESET);
 
     // Initiate read operation
-    I2C_TransferHandling(I2C1, device_address, 1, I2C_AutoEnd_Mode, I2C_Generate_Start_Read);
+    I2C_TransferHandling(I2C1, device_address, size, I2C_AutoEnd_Mode, I2C_Generate_Start_Read);
 
-    while(I2C_GetFlagStatus(I2C1, I2C_ISR_RXNE) == RESET);
+    for (int i = 0; i < size; ++i) {
+        while (I2C_GetFlagStatus(I2C1, I2C_ISR_RXNE) == RESET);
 
-    *buffer = I2C_ReceiveData(I2C1);
+	buffer[i] = I2C_ReceiveData(I2C1);
+    }
 
-    while(I2C_GetFlagStatus(I2C1, I2C_ISR_STOPF) == RESET);
+    while (I2C_GetFlagStatus(I2C1, I2C_ISR_STOPF) == RESET);
 
     I2C_ClearFlag(I2C1, I2C_ICR_STOPCF);
 }
 
-int main(void)
+void i2c_write(uint8_t device_address, uint8_t device_register, uint8_t *buffer, uint8_t size)
 {
-    i2c_init();
-    gpio_for_i2c_init();
-    gpio_common_init();
-
-    while (1) {
-        i2c_read(PCA9685_ADDRESS, PCA9685_MODE1, &i2c_buffer, 1);
-
-        if (0 != i2c_buffer) {
-            GPIO_SetBits(GPIOE, GPIO_Pin_8);
-        } else if (1 != i2c_buffer) {
-            GPIO_SetBits(GPIOE, GPIO_Pin_11);
-        }
+    // Check whether the I2C bus is idle
+    while (I2C_GetFlagStatus(I2C1, I2C_FLAG_BUSY));
+    
+    I2C_TransferHandling(I2C1, device_address, 1, I2C_Reload_Mode, I2C_Generate_Start_Write);
+    
+    // Waiting for TXDR register is empty
+    // And the data to be transmitted may be written to TXDR
+    while (I2C_GetFlagStatus(I2C1, I2C_ISR_TXIS) == RESET);
+    
+    // Send slave register address the info is need to be written to
+    I2C_SendData(I2C1, device_register);
+    
+    // Check that data have been transferred and RELOAD = 1
+    while (I2C_GetFlagStatus(I2C1, I2C_ISR_TCR) == RESET);
+    
+    I2C_TransferHandling(I2C1, device_address, size, I2C_AutoEnd_Mode, I2C_No_StartStop);
+    
+    while (size) {
+        while (I2C_GetFlagStatus(I2C1, I2C_ISR_TXIS) == RESET);
+        
+        // Write data to TXDR 
+        I2C_SendData(I2C1, *buffer);
+        
+        buffer++;
+        size--;
     }
+    
+    while (I2C_GetFlagStatus(I2C1, I2C_ISR_STOPF) == RESET);
 
-    return 0;
+    I2C_ClearFlag(I2C1, I2C_ICR_STOPCF);
 }

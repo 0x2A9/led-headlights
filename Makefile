@@ -11,7 +11,8 @@ SYSTEM_SCRIPT_DIR = $(STM_LIB_DIR)/Project/Peripheral_Examples/FLASH_Program
 # Files
 SOURCES =  src/main.c \
            src/drivers/gpio.c \
-           src/drivers/i2c.c
+           src/drivers/i2c.c \
+           src/drivers/pca9685.c
 SOURCES += $(STM_LIB_DIR)/Libraries/CMSIS/Device/ST/STM32F30x/Source/Templates/TrueSTUDIO/startup_stm32f30x.s \
            $(SYSTEM_SCRIPT_DIR)/system_stm32f30x.c
 SOURCES += stm32f30x_rcc.c \

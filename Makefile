@@ -1,3 +1,12 @@
+# Arguments
+ifeq ($(TARGET_NAME),TX) 
+TARGET = tx
+else ifeq ($(TARGET_NAME),RX)
+TARGET = rx
+else
+$(error "Must pass TARGET_NAME=TX or TARGET_NAME=RX")
+endif
+
 # Toolchain
 CC = arm-none-eabi-gcc
 OBJCOPY = arm-none-eabi-objcopy
@@ -9,17 +18,27 @@ LINKER_SCRIPT_DIR = $(STM_LIB_DIR)/Project/Peripheral_Examples/FLASH_Program/Tru
 SYSTEM_SCRIPT_DIR = $(STM_LIB_DIR)/Project/Peripheral_Examples/FLASH_Program
 
 # Files
-SOURCES =  src/main.c \
+SOURCES_rx =  src/rx/main.c \
            src/drivers/gpio.c \
            src/drivers/i2c.c \
-           src/drivers/pca9685.c
-SOURCES += $(STM_LIB_DIR)/Libraries/CMSIS/Device/ST/STM32F30x/Source/Templates/TrueSTUDIO/startup_stm32f30x.s \
+           src/drivers/pca9685.c \
+           src/drivers/can.c 
+
+SOURCES_tx =  src/tx/main.c \
+           src/drivers/gpio.c \
+           src/drivers/i2c.c \
+           src/drivers/pca9685.c \
+           src/drivers/can.c 
+
+SOURCES_COMMON += $(STM_LIB_DIR)/Libraries/CMSIS/Device/ST/STM32F30x/Source/Templates/TrueSTUDIO/startup_stm32f30x.s \
            $(SYSTEM_SCRIPT_DIR)/system_stm32f30x.c
-SOURCES += stm32f30x_rcc.c \
+
+SOURCES_COMMON += stm32f30x_rcc.c \
            stm32f30x_gpio.c \
-           stm32f30x_i2c.c
+           stm32f30x_i2c.c \
+           stm32f30x_can.c
+
 OBJECTS = $(SRCS:.c=.o)
-TARGET  = headlights
 
 vpath %.c $(STM_LIB_DIR)/Libraries/STM32F30x_StdPeriph_Driver/src \
 
@@ -35,6 +54,7 @@ CFLAGS += -I$(STM_LIB_DIR)/Libraries/CMSIS/Device/ST/STM32F30x/Include
 CFLAGS += -I$(STM_LIB_DIR)/Libraries/STM32F30x_StdPeriph_Driver/inc
 CFLAGS += -I$(STM_LIB_DIR)/Utilities/STM32F3_Discovery
 CFLAGS += -I$(STM_LIB_DIR)/Project/Demonstration
+CFLAGS += -Isrc
 
 # Env Variables
 LD_LIBRARY_PATH=$(STL_DIR)/build/Release/lib
@@ -46,7 +66,7 @@ all: proj
 
 proj: $(TARGET).elf
 
-$(TARGET).elf: $(SOURCES)
+$(TARGET).elf: $(SOURCES_COMMON) $(SOURCES_$(TARGET))
 	$(CC) $(CFLAGS) $^ -o $@
 	$(OBJCOPY) -O ihex $(TARGET).elf $(TARGET).hex
 	$(OBJCOPY) -O binary $(TARGET).elf $(TARGET).bin

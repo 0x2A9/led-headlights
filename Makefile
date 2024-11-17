@@ -1,9 +1,5 @@
-# Arguments
-ifeq ($(TARGET_NAME),TX) 
-TARGET = tx
-else ifeq ($(TARGET_NAME),RX)
-TARGET = rx
-else
+# Check Args
+ifndef TARGET_NAME
 $(error "Must pass TARGET_NAME=TX or TARGET_NAME=RX")
 endif
 
@@ -16,24 +12,26 @@ STL_DIR = /home/kristina/Embedded/stm32f3_discovery/stlink-1.8.0
 STM_LIB_DIR = /home/kristina/Embedded/stm32f3_discovery/STM32F3-Discovery_FW_V1.1.0
 LINKER_SCRIPT_DIR = $(STM_LIB_DIR)/Project/Peripheral_Examples/FLASH_Program/TrueSTUDIO/FLASH_Program
 SYSTEM_SCRIPT_DIR = $(STM_LIB_DIR)/Project/Peripheral_Examples/FLASH_Program
+BUILD_DIR = build
 
 # Files
-SOURCES_rx =  src/rx/main.c \
-           src/drivers/gpio.c \
-           src/drivers/i2c.c \
-           src/drivers/pca9685.c \
+ifeq ($(TARGET_NAME),TX) 
+TARGET = $(BUILD_DIR)/tx
+SOURCES = src/tx/main.c 
+else ifeq ($(TARGET_NAME),RX)
+TARGET = $(BUILD_DIR)/rx
+SOURCES = src/rx/main.c \
+          src/drivers/i2c.c \
+          src/drivers/pca9685.c 
+endif
+
+SOURCES += src/drivers/gpio.c \
            src/drivers/can.c 
 
-SOURCES_tx =  src/tx/main.c \
-           src/drivers/gpio.c \
-           src/drivers/i2c.c \
-           src/drivers/pca9685.c \
-           src/drivers/can.c 
-
-SOURCES_COMMON += $(STM_LIB_DIR)/Libraries/CMSIS/Device/ST/STM32F30x/Source/Templates/TrueSTUDIO/startup_stm32f30x.s \
+SOURCES += $(STM_LIB_DIR)/Libraries/CMSIS/Device/ST/STM32F30x/Source/Templates/TrueSTUDIO/startup_stm32f30x.s \
            $(SYSTEM_SCRIPT_DIR)/system_stm32f30x.c
 
-SOURCES_COMMON += stm32f30x_rcc.c \
+SOURCES += stm32f30x_rcc.c \
            stm32f30x_gpio.c \
            stm32f30x_i2c.c \
            stm32f30x_can.c
@@ -66,7 +64,7 @@ all: proj
 
 proj: $(TARGET).elf
 
-$(TARGET).elf: $(SOURCES_COMMON) $(SOURCES_$(TARGET))
+$(TARGET).elf: $(SOURCES)
 	$(CC) $(CFLAGS) $^ -o $@
 	$(OBJCOPY) -O ihex $(TARGET).elf $(TARGET).hex
 	$(OBJCOPY) -O binary $(TARGET).elf $(TARGET).bin

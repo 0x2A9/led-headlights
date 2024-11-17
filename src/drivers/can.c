@@ -3,25 +3,6 @@
 uint8_t can_init()
 {
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_CAN1, ENABLE);
-    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOB, ENABLE);
-
-    GPIO_PinAFConfig(GPIOB, GPIO_PinSource8, GPIO_AF_9);
-    GPIO_PinAFConfig(GPIOB, GPIO_PinSource9, GPIO_AF_9);
-
-    GPIO_InitTypeDef  gpio;
-
-    /* Configure CAN pin: RX */
-    gpio.GPIO_Pin = GPIO_Pin_8;
-    gpio.GPIO_Mode = GPIO_Mode_AF;
-    gpio.GPIO_OType = GPIO_OType_PP;
-    gpio.GPIO_PuPd = GPIO_PuPd_UP;
-    gpio.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_Init(GPIOB, &gpio);
-
-    /* Configure CAN pin: TX */
-    gpio.GPIO_Pin = GPIO_Pin_9;
-    gpio.GPIO_PuPd = GPIO_PuPd_NOPULL;
-    GPIO_Init(GPIOB, &gpio);
 
     CAN_InitTypeDef can;
 

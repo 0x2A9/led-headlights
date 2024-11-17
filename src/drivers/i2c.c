@@ -18,27 +18,6 @@ void i2c1_init()
     I2C_Cmd(I2C1, ENABLE);
 }
 
-/**
-  * I2C1 pins configuration on the GPIO B port
-  * To use I2C
-  */
-void gpio_for_i2c1_init()
-{
-    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOB, ENABLE);
-
-    GPIO_PinAFConfig(GPIOB, GPIO_PinSource6, GPIO_AF_4);
-    GPIO_PinAFConfig(GPIOB, GPIO_PinSource7, GPIO_AF_4);
-
-    GPIO_InitTypeDef GPIO_InitStruct;
-
-    GPIO_InitStruct.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7;
-    GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF;
-    GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStruct.GPIO_OType = GPIO_OType_OD;
-    GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;
-    GPIO_Init(GPIOB, &GPIO_InitStruct);
-}
-
 void i2c_read(I2C_TypeDef* I2Cx, uint8_t device_address, uint8_t device_register, uint8_t *buffer, uint8_t size)
 {
     // Check whether the I2C bus is idle

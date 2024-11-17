@@ -5,11 +5,9 @@
 
 int main(void)
 {
+    gpio_output_mode_init();
+    gpio_i2c_mode_init();
     i2c1_init();
-
-    gpio_for_i2c1_init();
-    gpio_init();
-    
     pca9685_init(PCA9685_DEFAULT_FREQUENCY);
 
     uint16_t counter = 0;
@@ -36,7 +34,7 @@ int main(void)
             counter -= 1;
         }
 
-        GPIO_SetBits(GPIOE, GPIO_Pin_8 | GPIO_Pin_11);
+        gpio_write_bit(GPIOE, GPIO_Pin_8 | GPIO_Pin_11, Bit_SET);
     }
 
     return 0;

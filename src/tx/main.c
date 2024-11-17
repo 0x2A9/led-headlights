@@ -1,16 +1,18 @@
 #include "stm32f30x.h"
-#include "drivers/gpio.h"
 #include "stm32f30x_can.h"
+#include "drivers/gpio.h"
 #include "drivers/can.h"
 
 CanTxMsg msg;
 
 int main(void)
 {
-    gpio_init();
+    gpio_output_mode_init();
+    gpio_input_mode_init();
+    gpio_can_mode_init();
 
     if (can_init() == CAN_InitStatus_Success) {
-        GPIO_SetBits(GPIOE, GPIO_Pin_8);
+        gpio_write_bit(GPIOE, GPIO_Pin_10, Bit_SET);
     }
 
     msg.StdId = 0;
@@ -29,7 +31,7 @@ int main(void)
 
     while (1) {
         if (can_write(&msg) == 0) {
-            GPIO_SetBits(GPIOE, GPIO_Pin_11);
+            gpio_write_bit(GPIOE, GPIO_Pin_11, Bit_SET);
         }
     }
 

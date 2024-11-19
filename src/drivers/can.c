@@ -23,6 +23,41 @@ uint8_t can_init()
     return CAN_Init(CAN1, &can);
 }
 
+void can_filter_init()
+{
+    CAN_FilterInitTypeDef filter;
+
+    filter.CAN_FilterNumber = 0;
+    filter.CAN_FilterActivation = ENABLE;
+    filter.CAN_FilterMode = CAN_FilterMode_IdMask;
+    filter.CAN_FilterFIFOAssignment = CAN_FilterFIFO0;
+    filter.CAN_FilterIdHigh = 0;
+    filter.CAN_FilterIdLow = 0;
+    filter.CAN_FilterMaskIdHigh = 0;
+    filter.CAN_FilterMaskIdLow = 0;
+    filter.CAN_FilterScale = CAN_FilterScale_16bit;
+
+    CAN_FilterInit(&filter);
+}
+
+uint8_t can_read(CAN_TypeDef* canx, uint8_t fifo_number, CanRxMsg* msg)
+{
+    if (fifo_number == CAN_FIFO0) {
+        if (CAN_GetFlagStatus(canx, CAN_FLAG_FMP0) != SET) {
+            return 1;
+        }
+    } else {
+        if (CAN_GetFlagStatus(canx, CAN_FLAG_FMP1) != SET) {
+            return 1;
+        }
+    }
+
+    CAN_Receive(canx, fifo_number, msg);
+    CAN_FIFORelease(canx, fifo_number);
+
+    return 0;
+}
+
 uint8_t can_write(CanTxMsg* msg)
 {
     uint8_t mb = 0;

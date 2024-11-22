@@ -30,8 +30,14 @@ int main(void)
     msg.Data[0] = 1;
 
     while (1) {
-        if (can_write(&msg) == 0) {
-            gpio_write_bit(GPIOE, GPIO_Pin_11, Bit_SET);
+        if (gpio_read_bit(GPIOD, GPIO_Pin_10) == Bit_SET) {
+            gpio_write_bit(GPIOE, GPIO_Pin_8, Bit_SET);
+
+            if (can_write(&msg) == 0) {
+                gpio_write_bit(GPIOE, GPIO_Pin_11, Bit_SET);
+            }
+        } else {
+            gpio_write_bit(GPIOE, GPIO_Pin_8 | GPIO_Pin_11, Bit_RESET);
         }
     }
 

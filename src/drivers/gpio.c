@@ -78,7 +78,7 @@ void gpio_can_mode_init()
 
 BitAction gpio_read_bit(GPIO_TypeDef* GPIOx, uint16_t pin)
 {
-    if ((GPIOx->IDR & pin) == (uint32_t)Bit_SET) {
+    if ((GPIOx->IDR & pin) != (uint32_t)Bit_RESET) {
         return Bit_SET;
     } else {
         return Bit_RESET;

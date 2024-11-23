@@ -3,6 +3,7 @@
 #include "drivers/gpio.h"
 #include "drivers/pca9685.h"
 #include "drivers/can.h"
+#include <string.h>
 
 int main(void)
 {
@@ -13,18 +14,22 @@ int main(void)
     pca9685_init(PCA9685_DEFAULT_FREQUENCY);
     
     if (can_init() == CAN_InitStatus_Success) {
-        gpio_write_bit(GPIOE, GPIO_Pin_11, Bit_SET);
+        gpio_write_bit(GPIOE, GPIO_Pin_10, Bit_SET);
     }
+    
     can_filter_init();
 
     uint16_t counter = 0;
     uint16_t interanl_counter_max = 4095;
+    CanRxMsg msg;
 
     while (1)  {
-        CanRxMsg msg;
+        memset(&msg.Data, Bit_RESET, sizeof(msg.Data));
 
         if (can_read(CAN1, CAN_FIFO0, &msg) == 0) {
             gpio_write_bit(GPIOE, GPIO_Pin_8, Bit_SET);    
+        } else {
+            gpio_write_bit(GPIOE, GPIO_Pin_8, Bit_RESET);
         }
 
         while (counter < interanl_counter_max)
@@ -37,10 +42,6 @@ int main(void)
             counter += 1;
         }
 
-        if (msg.Data[2] == 0) {
-            gpio_write_bit(GPIOE, GPIO_Pin_10, Bit_SET);
-        }
-
         while (counter > 0)
         {
             pca9685_set_pwm(0, 0, counter);
@@ -51,7 +52,13 @@ int main(void)
             counter -= 1;
         }
 
-        gpio_write_bit(GPIOE, GPIO_Pin_10, Bit_RESET);
+        if (msg.Data[6] == 78) {
+            gpio_write_bit(GPIOE, GPIO_Pin_11, Bit_SET);
+            pca9685_set_pwm(4, 0, 4095);
+        } else {
+            gpio_write_bit(GPIOE, GPIO_Pin_11, Bit_RESET);
+            pca9685_set_pwm(4, 0, 125);
+        }
     }
 
     return 0;

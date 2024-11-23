@@ -1,20 +1,26 @@
-# Check Args
+# CHECK ARGS
 ifndef TARGET_NAME
 $(error "Must pass TARGET_NAME=TX or TARGET_NAME=RX")
 endif
 
-# Toolchain
+# TOOLCHAIN
 CC = arm-none-eabi-gcc
 OBJCOPY = arm-none-eabi-objcopy
 
-# Directories
-STL_DIR = /home/kristina/Embedded/stm32f3_discovery/stlink-1.8.0
-STM_LIB_DIR = /home/kristina/Embedded/stm32f3_discovery/STM32F3-Discovery_FW_V1.1.0
+# DIRECTORIES
 LINKER_SCRIPT_DIR = $(STM_LIB_DIR)/Project/Peripheral_Examples/FLASH_Program/TrueSTUDIO/FLASH_Program
 SYSTEM_SCRIPT_DIR = $(STM_LIB_DIR)/Project/Peripheral_Examples/FLASH_Program
 BUILD_DIR = build
 
-# Files
+ifndef STL_DIR
+$(error "STL_DIR must be specified")
+endif
+
+ifndef STM_LIB_DIR
+$(error "STM_LIB_DIR must be specified")
+endif
+
+# FILES
 ifeq ($(TARGET_NAME),TX) 
 TARGET = $(BUILD_DIR)/tx
 SOURCES = src/tx/main.c 
@@ -40,7 +46,7 @@ OBJECTS = $(SRCS:.c=.o)
 
 vpath %.c $(STM_LIB_DIR)/Libraries/STM32F30x_StdPeriph_Driver/src \
 
-# Flags
+# FLAGS
 CFLAGS  = --specs=nosys.specs
 CFLAGS += -g -O2 -Wall -T$(LINKER_SCRIPT_DIR)/STM32_FLASH.ld
 CFLAGS += -DUSE_STDPERIPH_DRIVER
@@ -54,15 +60,15 @@ CFLAGS += -I$(STM_LIB_DIR)/Utilities/STM32F3_Discovery
 CFLAGS += -I$(STM_LIB_DIR)/Project/Demonstration
 CFLAGS += -Isrc
 
-# Env Variables
+# ENV VARIABLES
+# Path to a dynamic ST-Link library
 LD_LIBRARY_PATH=$(STL_DIR)/build/Release/lib
 
-.PHONY: proj
+# PHONIES
+.PHONY: all clean flash
 
-# Commands
-all: proj
-
-proj: $(TARGET).elf
+# COMMANDS
+all: $(TARGET).elf
 
 $(TARGET).elf: $(SOURCES)
 	$(CC) $(CFLAGS) $^ -o $@
@@ -72,5 +78,5 @@ $(TARGET).elf: $(SOURCES)
 clean:
 	rm -f *.o $(TARGET).elf $(TARGET).hex $(TARGET).bin
 
-flash: proj
+flash: $(TARGET).elf
 	$(STL_DIR)/st-flash write $(TARGET).bin 0x08000000

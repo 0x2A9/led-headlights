@@ -1,7 +1,7 @@
 #include "gpio.h"
 
 /**
- * Configure debug state pins
+ * Configure LED pins
  */
 void gpio_output_mode_init()
 {
@@ -53,43 +53,20 @@ void gpio_i2c_mode_init()
     GPIO_Init(GPIOB, &GPIO_InitStruct);
 }
 
-void gpio_can_mode_init()
+BitAction gpio_read_bit(GPIO_TypeDef* gpiox, uint16_t pin)
 {
-    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOB, ENABLE);
-
-    GPIO_PinAFConfig(GPIOB, GPIO_PinSource8, GPIO_AF_9);
-    GPIO_PinAFConfig(GPIOB, GPIO_PinSource9, GPIO_AF_9);
-
-    GPIO_InitTypeDef  gpio;
-
-    /* Configure CAN pin: RX */
-    gpio.GPIO_Pin = GPIO_Pin_8;
-    gpio.GPIO_Mode = GPIO_Mode_AF;
-    gpio.GPIO_OType = GPIO_OType_PP;
-    gpio.GPIO_PuPd = GPIO_PuPd_UP;
-    gpio.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_Init(GPIOB, &gpio);
-
-    /* Configure CAN pin: TX */
-    gpio.GPIO_Pin = GPIO_Pin_9;
-    gpio.GPIO_PuPd = GPIO_PuPd_NOPULL;
-    GPIO_Init(GPIOB, &gpio);
-}
-
-BitAction gpio_read_bit(GPIO_TypeDef* GPIOx, uint16_t pin)
-{
-    if ((GPIOx->IDR & pin) != (uint32_t)Bit_RESET) {
+    if ((gpiox->IDR & pin) != (uint32_t)Bit_RESET) {
         return Bit_SET;
     } else {
         return Bit_RESET;
     }
 }
 
-void gpio_write_bit(GPIO_TypeDef* GPIOx, uint16_t pin, BitAction value)
+void gpio_write_bit(GPIO_TypeDef* gpiox, uint16_t pin, BitAction value)
 {
     if (value == Bit_RESET) {
-        GPIOx->ODR &= ~((uint16_t)pin);
+        gpiox->ODR &= ~((uint16_t)pin);
     } else {
-        GPIOx->ODR |= ((uint16_t)pin);
+        gpiox->ODR |= ((uint16_t)pin);
     }
 }

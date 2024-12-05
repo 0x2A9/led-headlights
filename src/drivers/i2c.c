@@ -18,69 +18,69 @@ void i2c1_init()
     I2C_Cmd(I2C1, ENABLE);
 }
 
-void i2c_read(I2C_TypeDef* I2Cx, uint8_t device_address, uint8_t device_register, uint8_t *buffer, uint8_t size)
+void i2c_read(I2C_TypeDef* i2cx, uint8_t device_address, uint8_t device_register, uint8_t *buffer, uint8_t size)
 {
     // Check whether the I2C bus is idle
-    while (I2C_GetFlagStatus(I2Cx, I2C_FLAG_BUSY));
+    while (I2C_GetFlagStatus(i2cx, I2C_FLAG_BUSY));
 
-    I2C_TransferHandling(I2Cx, device_address, 1, I2C_SoftEnd_Mode, I2C_Generate_Start_Write);
+    I2C_TransferHandling(i2cx, device_address, 1, I2C_SoftEnd_Mode, I2C_Generate_Start_Write);
 
     // Waiting for TXDR register is empty
     // And the data to be transmitted may be written to TXDR
-    while (I2C_GetFlagStatus(I2Cx, I2C_ISR_TXIS) == RESET);
+    while (I2C_GetFlagStatus(i2cx, I2C_ISR_TXIS) == RESET);
 
     // Send slave register address the info is need to be read from
-    I2C_SendData(I2Cx, device_register);
+    I2C_SendData(i2cx, device_register);
 
     // Wait for the end of address transmission (EAT)
     // For master mode TC bit of the ISR register specifies EAT
     // It also read ISR register, so the TC bit is cleared
-    while (I2C_GetFlagStatus(I2Cx, I2C_FLAG_TC) == RESET);
+    while (I2C_GetFlagStatus(i2cx, I2C_FLAG_TC) == RESET);
 
     // Initiate read operation
-    I2C_TransferHandling(I2Cx, device_address, size, I2C_AutoEnd_Mode, I2C_Generate_Start_Read);
+    I2C_TransferHandling(i2cx, device_address, size, I2C_AutoEnd_Mode, I2C_Generate_Start_Read);
 
     for (int i = 0; i < size; ++i) {
-        while (I2C_GetFlagStatus(I2Cx, I2C_ISR_RXNE) == RESET);
+        while (I2C_GetFlagStatus(i2cx, I2C_ISR_RXNE) == RESET);
 
-        buffer[i] = I2C_ReceiveData(I2Cx);
+        buffer[i] = I2C_ReceiveData(i2cx);
     }
 
-    while (I2C_GetFlagStatus(I2Cx, I2C_ISR_STOPF) == RESET);
+    while (I2C_GetFlagStatus(i2cx, I2C_ISR_STOPF) == RESET);
 
-    I2C_ClearFlag(I2Cx, I2C_ICR_STOPCF);
+    I2C_ClearFlag(i2cx, I2C_ICR_STOPCF);
 }
 
-void i2c_write(I2C_TypeDef* I2Cx, uint8_t device_address, uint8_t device_register, uint8_t *buffer, uint8_t size)
+void i2c_write(I2C_TypeDef* i2cx, uint8_t device_address, uint8_t device_register, uint8_t *buffer, uint8_t size)
 {
     // Check whether the I2C bus is idle
-    while (I2C_GetFlagStatus(I2Cx, I2C_FLAG_BUSY));
+    while (I2C_GetFlagStatus(i2cx, I2C_FLAG_BUSY));
 
-    I2C_TransferHandling(I2Cx, device_address, 1, I2C_Reload_Mode, I2C_Generate_Start_Write);
+    I2C_TransferHandling(i2cx, device_address, 1, I2C_Reload_Mode, I2C_Generate_Start_Write);
 
     // Waiting for TXDR register is empty
     // And the data to be transmitted may be written to TXDR
-    while (I2C_GetFlagStatus(I2Cx, I2C_ISR_TXIS) == RESET);
+    while (I2C_GetFlagStatus(i2cx, I2C_ISR_TXIS) == RESET);
 
     // Send slave register address the info is need to be written to
-    I2C_SendData(I2Cx, device_register);
+    I2C_SendData(i2cx, device_register);
 
     // Check that data have been transferred and RELOAD = 1
-    while (I2C_GetFlagStatus(I2Cx, I2C_ISR_TCR) == RESET);
+    while (I2C_GetFlagStatus(i2cx, I2C_ISR_TCR) == RESET);
 
-    I2C_TransferHandling(I2Cx, device_address, size, I2C_AutoEnd_Mode, I2C_No_StartStop);
+    I2C_TransferHandling(i2cx, device_address, size, I2C_AutoEnd_Mode, I2C_No_StartStop);
 
     while (size) {
-        while (I2C_GetFlagStatus(I2Cx, I2C_ISR_TXIS) == RESET);
+        while (I2C_GetFlagStatus(i2cx, I2C_ISR_TXIS) == RESET);
 
         // Write data to TXDR
-        I2C_SendData(I2Cx, *buffer);
+        I2C_SendData(i2cx, *buffer);
 
         buffer++;
         size--;
     }
 
-    while (I2C_GetFlagStatus(I2Cx, I2C_ISR_STOPF) == RESET);
+    while (I2C_GetFlagStatus(i2cx, I2C_ISR_STOPF) == RESET);
 
-    I2C_ClearFlag(I2Cx, I2C_ICR_STOPCF);
+    I2C_ClearFlag(i2cx, I2C_ICR_STOPCF);
 }

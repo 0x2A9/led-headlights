@@ -9,11 +9,7 @@ int main(void)
 {
     gpio_output_mode_init();
     gpio_input_mode_init();
-    gpio_can_mode_init();
-
-    if (can_init() == CAN_InitStatus_Success) {
-        gpio_write_bit(GPIOE, GPIO_Pin_10, Bit_SET);
-    }
+    can_init();
 
     msg.StdId = 0;
     msg.RTR = CAN_RTR_DATA;
@@ -33,7 +29,7 @@ int main(void)
         if (gpio_read_bit(GPIOD, GPIO_Pin_10) == Bit_SET) {
             gpio_write_bit(GPIOE, GPIO_Pin_8, Bit_SET);
 
-            if (can_write(&msg) == 0) {
+            if (can_write(CAN1, &msg) == 0) {
                 gpio_write_bit(GPIOE, GPIO_Pin_11, Bit_SET);
             }
         } else {

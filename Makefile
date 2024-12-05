@@ -32,7 +32,8 @@ SOURCES = src/rx/main.c \
 endif
 
 SOURCES += src/drivers/gpio.c \
-           src/drivers/can.c 
+           src/drivers/can.c \
+           src/drivers/stm32f30x_it.c
 
 SOURCES += $(STM_LIB_DIR)/Libraries/CMSIS/Device/ST/STM32F30x/Source/Templates/TrueSTUDIO/startup_stm32f30x.s \
            $(SYSTEM_SCRIPT_DIR)/system_stm32f30x.c
@@ -40,7 +41,8 @@ SOURCES += $(STM_LIB_DIR)/Libraries/CMSIS/Device/ST/STM32F30x/Source/Templates/T
 SOURCES += stm32f30x_rcc.c \
            stm32f30x_gpio.c \
            stm32f30x_i2c.c \
-           stm32f30x_can.c
+           stm32f30x_can.c \
+           stm32f30x_misc.c
 
 OBJECTS = $(SRCS:.c=.o)
 

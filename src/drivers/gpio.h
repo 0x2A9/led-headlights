@@ -14,7 +14,6 @@ typedef enum {
 
 void gpio_output_mode_init();
 void gpio_input_mode_init();
-void gpio_i2c_mode_init();
 BitAction gpio_read_bit(GPIO_TypeDef* gpiox, uint16_t pin);
 void gpio_write_bit(GPIO_TypeDef* gpiox, uint16_t pin, BitAction value);
 

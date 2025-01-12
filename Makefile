@@ -27,12 +27,12 @@ SOURCES = src/tx/main.c
 else ifeq ($(TARGET_NAME),RX)
 TARGET = $(BUILD_DIR)/rx
 SOURCES = src/rx/main.c \
-          src/drivers/i2c.c \
           src/drivers/pca9685.c 
 endif
 
 SOURCES += src/drivers/gpio.c \
            src/drivers/can.c \
+           src/drivers/i2c.c \
            src/drivers/stm32f30x_it.c
 
 SOURCES += $(STM_LIB_DIR)/Libraries/CMSIS/Device/ST/STM32F30x/Source/Templates/TrueSTUDIO/startup_stm32f30x.s \

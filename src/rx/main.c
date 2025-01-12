@@ -10,7 +10,6 @@
 int main(void)
 {
     gpio_output_mode_init();
-    gpio_i2c_mode_init();
     i2c1_init();
     pca9685_init(PCA9685_DEFAULT_FREQUENCY);
     

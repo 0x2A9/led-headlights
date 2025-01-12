@@ -34,26 +34,6 @@ void gpio_input_mode_init()
     GPIO_Init(GPIOD, &gpio);
 }
 
-/**
- * Configure I2C pins 
- */
-void gpio_i2c_mode_init()
-{
-    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOB, ENABLE);
-
-    GPIO_PinAFConfig(GPIOB, GPIO_PinSource6, GPIO_AF_4);
-    GPIO_PinAFConfig(GPIOB, GPIO_PinSource7, GPIO_AF_4);
-
-    GPIO_InitTypeDef gpio;
-
-    gpio.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7;
-    gpio.GPIO_Mode = GPIO_Mode_AF;
-    gpio.GPIO_Speed = GPIO_Speed_50MHz;
-    gpio.GPIO_OType = GPIO_OType_OD;
-    gpio.GPIO_PuPd = GPIO_PuPd_UP;
-    GPIO_Init(GPIOB, &gpio);
-}
-
 BitAction gpio_read_bit(GPIO_TypeDef* gpiox, uint16_t pin)
 {
     if ((gpiox->IDR & pin) != (uint32_t)Bit_RESET) {

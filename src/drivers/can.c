@@ -1,5 +1,8 @@
 #include "can.h"
 
+CanTxMsg can_tx_msg;
+CanRxMsg can_rx_msg;
+
 void can_init()
 {
     /* 1. GPIO Config */
@@ -54,22 +57,22 @@ void can_init()
 
     /* 3. NVIC Config */
 
-    NVIC_InitTypeDef NVIC_InitStructure;
+    NVIC_InitTypeDef nvic;
 
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    nvic.NVIC_IRQChannelPreemptionPriority = 0;
+    nvic.NVIC_IRQChannelSubPriority = 0;
+    nvic.NVIC_IRQChannelCmd = ENABLE;
 
     // 3.1 Interrupts from receiver 
-    NVIC_InitStructure.NVIC_IRQChannel = CAN1_RX1_IRQn;
-    NVIC_Init(&NVIC_InitStructure);
+    nvic.NVIC_IRQChannel = CAN1_RX1_IRQn;
+    NVIC_Init(&nvic);
 
     // 3.2 Interrupts from transmitter
-    // NVIC_InitStructure.NVIC_IRQChannel = USB_HP_CAN1_TX_IRQn;  
-    // NVIC_Init(&NVIC_InitStructure);
+    nvic.NVIC_IRQChannel = USB_HP_CAN1_TX_IRQn;  
+    NVIC_Init(&nvic);
 
-    CAN_ITConfig(CAN1, CAN_IT_FMP1, ENABLE);
-    // CAN_ITConfig(CAN1, CAN_IT_TME, ENABLE);
+    CAN_ITConfig(CAN1, CAN_IT_FMP1, ENABLE); /* On FIFO 1 pending message */
+    CAN_ITConfig(CAN1, CAN_IT_TME, ENABLE);  /* On mailbox 0|1|2 empty */
 }
 
 void can_filter_init()
@@ -112,14 +115,12 @@ uint8_t can_write(CAN_TypeDef* canx, CanTxMsg* msg)
     uint8_t mb = 0;
 
     if ((mb = CAN_Transmit(canx, msg)) == CAN_NO_MB) {
-        return 1;
+        return CAN_TxStatus_Failed;
     }
 
     if (CAN_TransmitStatus(canx, mb) == CAN_TxStatus_Failed) {
-        return 1;
+        return CAN_TxStatus_Failed;
     }
 
-    while (CAN_TransmitStatus(canx, mb) == CAN_TxStatus_Pending);
-
-    return 0;
+    return CAN_TxStatus_Ok;
 }

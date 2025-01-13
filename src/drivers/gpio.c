@@ -7,14 +7,15 @@ void gpio_output_mode_init()
 {
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOE, ENABLE);
 
-    GPIO_InitTypeDef GPIO_InitStruct;
+    GPIO_InitTypeDef gpio;
 
-    GPIO_InitStruct.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_10 | GPIO_Pin_11;
-    GPIO_InitStruct.GPIO_Mode = GPIO_Mode_OUT;
-    GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
-    GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL;
-    GPIO_Init(GPIOE, &GPIO_InitStruct);
+    gpio.GPIO_Pin = LD4_COLOR_BLUE | LD3_COLOR_RED
+                  | LD5_COLOR_ORANGE | LD7_COLOR_GREEN;
+    gpio.GPIO_Mode = GPIO_Mode_OUT;
+    gpio.GPIO_Speed = GPIO_Speed_50MHz;
+    gpio.GPIO_OType = GPIO_OType_PP;
+    gpio.GPIO_PuPd = GPIO_PuPd_NOPULL;
+    GPIO_Init(GPIOE, &gpio);
 }
 
 /** 
@@ -24,13 +25,13 @@ void gpio_input_mode_init()
 {
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOD, ENABLE);
 
-    GPIO_InitTypeDef GPIO_InitStruct;
+    GPIO_InitTypeDef gpio;
 
-    GPIO_InitStruct.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9 
-                             | GPIO_Pin_10 | GPIO_Pin_11;
-    GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN;
-    GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_DOWN;
-    GPIO_Init(GPIOD, &GPIO_InitStruct);
+    gpio.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9 
+                  | GPIO_Pin_10 | GPIO_Pin_11;
+    gpio.GPIO_Mode = GPIO_Mode_IN;
+    gpio.GPIO_PuPd = GPIO_PuPd_DOWN;
+    GPIO_Init(GPIOD, &gpio);
 }
 
 /**
@@ -43,14 +44,14 @@ void gpio_i2c_mode_init()
     GPIO_PinAFConfig(GPIOB, GPIO_PinSource6, GPIO_AF_4);
     GPIO_PinAFConfig(GPIOB, GPIO_PinSource7, GPIO_AF_4);
 
-    GPIO_InitTypeDef GPIO_InitStruct;
+    GPIO_InitTypeDef gpio;
 
-    GPIO_InitStruct.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7;
-    GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF;
-    GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStruct.GPIO_OType = GPIO_OType_OD;
-    GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;
-    GPIO_Init(GPIOB, &GPIO_InitStruct);
+    gpio.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7;
+    gpio.GPIO_Mode = GPIO_Mode_AF;
+    gpio.GPIO_Speed = GPIO_Speed_50MHz;
+    gpio.GPIO_OType = GPIO_OType_OD;
+    gpio.GPIO_PuPd = GPIO_PuPd_UP;
+    GPIO_Init(GPIOB, &gpio);
 }
 
 BitAction gpio_read_bit(GPIO_TypeDef* gpiox, uint16_t pin)

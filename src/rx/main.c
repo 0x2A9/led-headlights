@@ -1,9 +1,10 @@
-#include "stm32f30x.h"
 #include "drivers/i2c.h"
 #include "drivers/gpio.h"
 #include "drivers/pca9685.h"
 #include "drivers/can.h"
 #include "drivers/stm32f30x_it.h"
+#include "stm32f30x.h"
+
 #include <string.h>
 
 int main(void)
@@ -20,7 +21,7 @@ int main(void)
     uint16_t interanl_counter_max = 4095;
 
     while (1)  {
-        memset(&rx_msg.Data, Bit_RESET, sizeof(rx_msg.Data));
+        memset(&can_rx_msg.Data, Bit_RESET, sizeof(can_rx_msg.Data));
 
         while (counter < interanl_counter_max)
         {
@@ -42,11 +43,11 @@ int main(void)
             counter -= 1;
         }
 
-        if (rx_msg.Data[6] == 78) {
-            gpio_write_bit(GPIOE, GPIO_Pin_11, Bit_SET);
+        if (can_rx_msg.Data[6] == 78) {
+            gpio_write_bit(GPIOE, LD7_COLOR_GREEN, Bit_SET);
             pca9685_set_pwm(4, 0, 4095);
         } else {
-            gpio_write_bit(GPIOE, GPIO_Pin_8 | GPIO_Pin_11, Bit_RESET);
+            gpio_write_bit(GPIOE, LD4_COLOR_BLUE | LD7_COLOR_GREEN, Bit_RESET);
             pca9685_set_pwm(4, 0, 125);
         }
     }

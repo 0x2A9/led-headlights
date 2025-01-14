@@ -57,7 +57,10 @@ void i2c1_init()
     NVIC_Init(&nvic);
 }
 
-void i2c_master_transmit_it(I2C_TypeDef* i2cx, uint8_t slave_addr, uint8_t *b_data, uint16_t size)
+void i2c_master_transmit_it(I2C_TypeDef* i2cx, 
+                            uint8_t slave_addr, 
+                            uint8_t *b_data, 
+                            uint16_t size)
 {
     if (0 == size) {
         return;
@@ -77,7 +80,10 @@ void i2c_master_transmit_it(I2C_TypeDef* i2cx, uint8_t slave_addr, uint8_t *b_da
                          I2C_Generate_Start_Write);
 }
 
-void i2c_master_receive_it(I2C_TypeDef* i2cx, uint8_t slave_addr, uint8_t *b_data, uint16_t size)
+void i2c_master_receive_it(I2C_TypeDef* i2cx, 
+                           uint8_t slave_addr, 
+                           uint8_t *b_data, 
+                           uint16_t size)
 {
     if (0 == size) {
         return;
@@ -97,7 +103,11 @@ void i2c_master_receive_it(I2C_TypeDef* i2cx, uint8_t slave_addr, uint8_t *b_dat
                          I2C_Generate_Start_Read);
 }
 
-void i2c_master_receive_polling(I2C_TypeDef* i2cx, uint8_t device_address, uint8_t device_register, uint8_t *buffer, uint8_t size)
+void i2c_master_receive_polling(I2C_TypeDef* i2cx, 
+                                uint8_t device_address, 
+                                uint8_t device_register, 
+                                uint8_t *buffer, 
+                                uint8_t size)
 {
     // Check whether the I2C bus is idle
     while (I2C_GetFlagStatus(i2cx, I2C_FLAG_BUSY));
@@ -130,7 +140,11 @@ void i2c_master_receive_polling(I2C_TypeDef* i2cx, uint8_t device_address, uint8
     I2C_ClearFlag(i2cx, I2C_ICR_STOPCF);
 }
 
-void i2c_master_transmit_polling(I2C_TypeDef* i2cx, uint8_t device_address, uint8_t device_register, uint8_t *buffer, uint8_t size)
+void i2c_master_transmit_polling(I2C_TypeDef* i2cx, 
+                                 uint8_t device_address, 
+                                 uint8_t device_register, 
+                                 uint8_t *buffer, 
+                                 uint8_t size)
 {
     // Check whether the I2C bus is idle
     while (I2C_GetFlagStatus(i2cx, I2C_FLAG_BUSY));

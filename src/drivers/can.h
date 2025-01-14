@@ -12,6 +12,7 @@ extern CanRxMsg can_rx_msg;
 
 void can_init();
 void can_filter_init();
+
 uint8_t can_read(CAN_TypeDef* canx, uint8_t fifo_number, CanRxMsg* msg);
 uint8_t can_write(CAN_TypeDef* canx, CanTxMsg* msg);
 

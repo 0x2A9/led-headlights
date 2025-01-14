@@ -42,7 +42,9 @@ pca9685_status_t pca9685_set_pwm_frequency(uint16_t frequency)
     return PCA9685_STATUS_OK;
 }
 
-pca9685_status_t pca9685_set_bit(uint8_t device_register, uint8_t bit, uint8_t value)
+pca9685_status_t pca9685_set_bit(uint8_t device_register, 
+                                 uint8_t bit, 
+                                 uint8_t value)
 {
     uint8_t reg_val;
 
@@ -57,6 +59,21 @@ pca9685_status_t pca9685_set_bit(uint8_t device_register, uint8_t bit, uint8_t v
     }
 
     return pca9685_write_reg(device_register, &reg_val, 1);
+}
+
+pca9685_status_t pca9685_set_pwm(uint8_t channel, 
+                                 uint16_t on_time, 
+                                 uint16_t off_time)
+{
+    uint8_t reg_addr = (uint8_t)(PCA9685_LED0_ON_L + (4 * channel));
+    uint8_t pwm_data[4];
+
+    pwm_data[0] = (uint8_t)(on_time & 0xFF);
+    pwm_data[1] = (uint8_t)((on_time >> 8) & 0xFF);
+    pwm_data[2] = (uint8_t)(off_time & 0xFF);
+    pwm_data[3] = (uint8_t)((off_time >> 8) & 0xFF);
+
+    return pca9685_write_reg(reg_addr, pwm_data, 4);
 }
 
 pca9685_status_t pca9685_write_reg(uint8_t reg_addr, uint8_t *b_data, uint16_t size)
@@ -112,17 +129,4 @@ pca9685_status_t pca9685_i2c_wait_util_idle(void)
     }
 
     return PCA9685_STATUS_OK;
-}
-
-pca9685_status_t pca9685_set_pwm(uint8_t channel, uint16_t on_time, uint16_t off_time)
-{
-    uint8_t reg_addr = (uint8_t)(PCA9685_LED0_ON_L + (4 * channel));
-    uint8_t pwm_data[4];
-
-    pwm_data[0] = (uint8_t)(on_time & 0xFF);
-    pwm_data[1] = (uint8_t)((on_time >> 8) & 0xFF);
-    pwm_data[2] = (uint8_t)(off_time & 0xFF);
-    pwm_data[3] = (uint8_t)((off_time >> 8) & 0xFF);
-
-    return pca9685_write_reg(reg_addr, pwm_data, 4);
 }

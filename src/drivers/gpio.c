@@ -9,32 +9,18 @@ void gpio_output_mode_init()
 
     GPIO_InitTypeDef gpio;
 
-    gpio.GPIO_Pin = LD4_COLOR_BLUE | LD3_COLOR_RED
-                  | LD5_COLOR_ORANGE | LD7_COLOR_GREEN;
-    gpio.GPIO_Mode = GPIO_Mode_OUT;
+    gpio.GPIO_Mode  = GPIO_Mode_OUT;
     gpio.GPIO_Speed = GPIO_Speed_50MHz;
     gpio.GPIO_OType = GPIO_OType_PP;
-    gpio.GPIO_PuPd = GPIO_PuPd_NOPULL;
+    gpio.GPIO_PuPd  = GPIO_PuPd_NOPULL;
+    gpio.GPIO_Pin   = LD3_COLOR_RED    | LD4_COLOR_BLUE 
+                    | LD5_COLOR_ORANGE | LD6_COLOR_GREEN 
+                    | LD7_COLOR_GREEN  | LD8_COLOR_ORANGE
+                    | LD9_COLOR_BLUE   | LD10_COLOR_RED;
     GPIO_Init(GPIOE, &gpio);
 }
 
-/** 
- * Configure button pins
- */ 
-void gpio_input_mode_init()
-{
-    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOD, ENABLE);
-
-    GPIO_InitTypeDef gpio;
-
-    gpio.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9 
-                  | GPIO_Pin_10 | GPIO_Pin_11;
-    gpio.GPIO_Mode = GPIO_Mode_IN;
-    gpio.GPIO_PuPd = GPIO_PuPd_DOWN;
-    GPIO_Init(GPIOD, &gpio);
-}
-
-BitAction gpio_read_bit(GPIO_TypeDef* gpiox, uint16_t pin)
+BitAction gpio_read_bit(GPIO_TypeDef *gpiox, uint16_t pin)
 {
     if ((gpiox->IDR & pin) != (uint32_t)Bit_RESET) {
         return Bit_SET;
@@ -43,7 +29,7 @@ BitAction gpio_read_bit(GPIO_TypeDef* gpiox, uint16_t pin)
     }
 }
 
-void gpio_write_bit(GPIO_TypeDef* gpiox, uint16_t pin, BitAction value)
+void gpio_write_bit(GPIO_TypeDef *gpiox, uint16_t pin, BitAction value)
 {
     if (value == Bit_RESET) {
         gpiox->ODR &= ~((uint16_t)pin);

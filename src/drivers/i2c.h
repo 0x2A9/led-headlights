@@ -22,9 +22,25 @@ extern volatile uint16_t   i2c_rx_index;
 extern volatile i2c_mode_t i2c_mode;
 
 void i2c1_init(void);
-void i2c_master_transmit_it(I2C_TypeDef* i2cx, uint8_t slave_addr, uint8_t *b_data, uint16_t size);
-void i2c_master_receive_it(I2C_TypeDef* i2cx, uint8_t slave_addr, uint8_t *b_data, uint16_t size);
-void i2c_master_receive_polling(I2C_TypeDef* i2cx, uint8_t device_address, uint8_t device_register, uint8_t *buffer, uint8_t size);
-void i2c_master_transmit_polling(I2C_TypeDef* i2cx, uint8_t device_address, uint8_t device_register, uint8_t *buffer, uint8_t size);
+
+void i2c_master_transmit_it(I2C_TypeDef* i2cx, 
+                            uint8_t slave_addr, 
+                            uint8_t *b_data, 
+                            uint16_t size);
+void i2c_master_receive_it(I2C_TypeDef* i2cx, 
+                           uint8_t slave_addr, 
+                           uint8_t *b_data, 
+                           uint16_t size);
+                           
+void i2c_master_receive_polling(I2C_TypeDef* i2cx, 
+                                uint8_t device_address, 
+                                uint8_t device_register, 
+                                uint8_t *buffer, 
+                                uint8_t size);
+void i2c_master_transmit_polling(I2C_TypeDef* i2cx, 
+                                uint8_t device_address, 
+                                uint8_t device_register, 
+                                uint8_t *buffer, 
+                                uint8_t size);
 
 #endif // LED_HEADLIGHTS_I2C_H

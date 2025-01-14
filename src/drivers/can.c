@@ -1,13 +1,25 @@
 #include "can.h"
 
-CanTxMsg can_tx_msg;
+CanTxMsg can_tx_msg = {
+    .StdId   = 0,
+    .RTR     = CAN_RTR_DATA,
+    .IDE     = CAN_ID_EXT,
+    .DLC     = 8,
+    .ExtId   = 0x200,
+    .Data[7] = 0,
+    .Data[6] = 'N',
+    .Data[5] = 0,
+    .Data[4] = 0,
+    .Data[3] = 0,
+    .Data[2] = 0,
+    .Data[1] = 0,
+    .Data[0] = 0,
+};
 CanRxMsg can_rx_msg;
 
 void can_init()
 {
     /* 1. GPIO Config */
-
-    // 1.1 GPIO Clock
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOB, ENABLE);
 
     GPIO_PinAFConfig(GPIOB, GPIO_PinSource8, GPIO_AF_9);
@@ -15,60 +27,48 @@ void can_init()
 
     GPIO_InitTypeDef gpio;
 
-    // 1.2 RX pin 
-    gpio.GPIO_Pin = GPIO_Pin_8;
-    gpio.GPIO_Mode = GPIO_Mode_AF;
+    gpio.GPIO_Pin   = GPIO_Pin_8; /* RX */
+    gpio.GPIO_Mode  = GPIO_Mode_AF;
     gpio.GPIO_OType = GPIO_OType_PP;
-    gpio.GPIO_PuPd = GPIO_PuPd_UP;
+    gpio.GPIO_PuPd  = GPIO_PuPd_UP;
     gpio.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init(GPIOB, &gpio);
 
-    // 1.3 TX Pin
-    gpio.GPIO_Pin = GPIO_Pin_9;
-    gpio.GPIO_PuPd = GPIO_PuPd_NOPULL;
+    gpio.GPIO_Pin   = GPIO_Pin_9; /* TX */
+    gpio.GPIO_PuPd  = GPIO_PuPd_NOPULL;
     GPIO_Init(GPIOB, &gpio);
 
     /* 2. CAN Config */
-
-    // 2.1 CAN Clock
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_CAN1, ENABLE);
 
     CAN_InitTypeDef can;
+    CAN_StructInit(&can); /* Reset CAN config */
 
-    // 2.2 Reset CAN config
-    CAN_DeInit(CAN1);
-    CAN_StructInit(&can);
-
-    // 2.3 CAN init
-    can.CAN_TTCM = DISABLE;
-    can.CAN_ABOM = DISABLE;
-    can.CAN_AWUM = DISABLE;
-    can.CAN_NART = DISABLE;
-    can.CAN_RFLM = DISABLE;
-    can.CAN_TXFP = DISABLE;
-    can.CAN_Mode = CAN_Mode_Normal;
-
-    can.CAN_SJW = CAN_SJW_1tq; 
-    can.CAN_BS1 = CAN_BS1_2tq; 
-    can.CAN_BS2 = CAN_BS2_1tq; 
+    can.CAN_TTCM      = DISABLE;
+    can.CAN_ABOM      = DISABLE;
+    can.CAN_AWUM      = DISABLE;
+    can.CAN_NART      = DISABLE;
+    can.CAN_RFLM      = DISABLE;
+    can.CAN_TXFP      = DISABLE;
+    can.CAN_Mode      = CAN_Mode_Normal;
+    can.CAN_SJW       = CAN_SJW_1tq; 
+    can.CAN_BS1       = CAN_BS1_2tq; 
+    can.CAN_BS2       = CAN_BS2_1tq; 
     can.CAN_Prescaler = 72;
 
     CAN_Init(CAN1, &can);
 
     /* 3. NVIC Config */
-
     NVIC_InitTypeDef nvic;
 
     nvic.NVIC_IRQChannelPreemptionPriority = 0;
-    nvic.NVIC_IRQChannelSubPriority = 0;
-    nvic.NVIC_IRQChannelCmd = ENABLE;
+    nvic.NVIC_IRQChannelSubPriority        = 0;
+    nvic.NVIC_IRQChannelCmd                = ENABLE;
 
-    // 3.1 Interrupts from receiver 
-    nvic.NVIC_IRQChannel = CAN1_RX1_IRQn;
+    nvic.NVIC_IRQChannel = CAN1_RX1_IRQn; /* RX ISR */
     NVIC_Init(&nvic);
 
-    // 3.2 Interrupts from transmitter
-    nvic.NVIC_IRQChannel = USB_HP_CAN1_TX_IRQn;  
+    nvic.NVIC_IRQChannel = USB_HP_CAN1_TX_IRQn; /* TX ISR */
     NVIC_Init(&nvic);
 
     CAN_ITConfig(CAN1, CAN_IT_FMP1, ENABLE); /* On FIFO 1 pending message */
@@ -79,15 +79,15 @@ void can_filter_init()
 {
     CAN_FilterInitTypeDef filter;
 
-    filter.CAN_FilterNumber = 1;
-    filter.CAN_FilterActivation = ENABLE;
-    filter.CAN_FilterMode = CAN_FilterMode_IdMask;
+    filter.CAN_FilterNumber         = 1;
+    filter.CAN_FilterActivation     = ENABLE;
+    filter.CAN_FilterMode           = CAN_FilterMode_IdMask;
     filter.CAN_FilterFIFOAssignment = CAN_FilterFIFO1;
-    filter.CAN_FilterIdHigh = 0;
-    filter.CAN_FilterIdLow = 0;
-    filter.CAN_FilterMaskIdHigh = 0;
-    filter.CAN_FilterMaskIdLow = 0;
-    filter.CAN_FilterScale = CAN_FilterScale_16bit;
+    filter.CAN_FilterIdHigh         = 0;
+    filter.CAN_FilterIdLow          = 0;
+    filter.CAN_FilterMaskIdHigh     = 0;
+    filter.CAN_FilterMaskIdLow      = 0;
+    filter.CAN_FilterScale          = CAN_FilterScale_16bit;
 
     CAN_FilterInit(&filter);
 }

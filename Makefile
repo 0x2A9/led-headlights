@@ -23,7 +23,12 @@ endif
 # FILES
 ifeq ($(TARGET_NAME),TX) 
 TARGET = $(BUILD_DIR)/tx
-SOURCES = src/tx/main.c 
+SOURCES = src/tx/main.c \
+          src/drivers/exti.c \
+          src/drivers/buttons.c \
+          stm32f30x_exti.c \
+          stm32f30x_syscfg.c
+
 else ifeq ($(TARGET_NAME),RX)
 TARGET = $(BUILD_DIR)/rx
 SOURCES = src/rx/main.c \
@@ -42,7 +47,7 @@ SOURCES += stm32f30x_rcc.c \
            stm32f30x_gpio.c \
            stm32f30x_i2c.c \
            stm32f30x_can.c \
-           stm32f30x_misc.c
+           stm32f30x_misc.c 
 
 OBJECTS = $(SRCS:.c=.o)
 
@@ -61,6 +66,7 @@ CFLAGS += -I$(STM_LIB_DIR)/Libraries/STM32F30x_StdPeriph_Driver/inc
 CFLAGS += -I$(STM_LIB_DIR)/Utilities/STM32F3_Discovery
 CFLAGS += -I$(STM_LIB_DIR)/Project/Demonstration
 CFLAGS += -Isrc
+CFLAGS += -D$(TARGET_NAME) # global define to access it from the multiple compilation units
 
 # ENV VARIABLES
 # Path to a dynamic ST-Link library

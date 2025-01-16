@@ -1,23 +1,6 @@
 #include "can.h"
 
-CanTxMsg can_tx_msg = {
-    .StdId   = 0,
-    .RTR     = CAN_RTR_DATA,
-    .IDE     = CAN_ID_EXT,
-    .DLC     = 8,
-    .ExtId   = 0x200,
-    .Data[7] = 0,
-    .Data[6] = 'N',
-    .Data[5] = 0,
-    .Data[4] = 0,
-    .Data[3] = 0,
-    .Data[2] = 0,
-    .Data[1] = 0,
-    .Data[0] = 0,
-};
-CanRxMsg can_rx_msg;
-
-void can_init()
+void can_init(void)
 {
     /* 1. GPIO Config */
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOB, ENABLE);
@@ -65,17 +48,20 @@ void can_init()
     nvic.NVIC_IRQChannelSubPriority        = 0;
     nvic.NVIC_IRQChannelCmd                = ENABLE;
 
-    nvic.NVIC_IRQChannel = CAN1_RX1_IRQn; /* RX ISR */
-    NVIC_Init(&nvic);
-
+#ifdef TX
     nvic.NVIC_IRQChannel = USB_HP_CAN1_TX_IRQn; /* TX ISR */
-    NVIC_Init(&nvic);
-
-    CAN_ITConfig(CAN1, CAN_IT_FMP1, ENABLE); /* On FIFO 1 pending message */
     CAN_ITConfig(CAN1, CAN_IT_TME, ENABLE);  /* On mailbox 0|1|2 empty */
+#else
+    nvic.NVIC_IRQChannel = CAN1_RX1_IRQn; /* RX ISR */
+    CAN_ITConfig(CAN1, CAN_IT_FMP1, ENABLE); /* On FIFO 1 pending message */
+#endif
+
+    NVIC_Init(&nvic);
 }
 
-void can_filter_init()
+#ifdef RX
+
+void can_init_filter(void)
 {
     CAN_FilterInitTypeDef filter;
 
@@ -91,6 +77,8 @@ void can_filter_init()
 
     CAN_FilterInit(&filter);
 }
+
+#endif
 
 uint8_t can_read(CAN_TypeDef* canx, uint8_t fifo_number, CanRxMsg* msg)
 {

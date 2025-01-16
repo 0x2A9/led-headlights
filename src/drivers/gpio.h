@@ -16,9 +16,9 @@ typedef enum {
     LD6_COLOR_GREEN  = GPIO_Pin_15,
 } ld_color_t;
 
-void gpio_output_mode_init();
+void gpio_init_leds(void);
 
-BitAction gpio_read_bit(GPIO_TypeDef *gpiox, uint16_t pin);
-void gpio_write_bit(GPIO_TypeDef *gpiox, uint16_t pin, BitAction value);
+FlagStatus gpio_read_bit(GPIO_TypeDef *gpiox, uint16_t pin);
+void gpio_write_bit(GPIO_TypeDef *gpiox, uint16_t pin, FlagStatus value);
 
 #endif // LED_HEADLIGHTS_GPIO_H

@@ -1,9 +1,6 @@
 #include "gpio.h"
 
-/**
- * Configure LED pins
- */
-void gpio_output_mode_init()
+void gpio_init_leds(void)
 {
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOE, ENABLE);
 
@@ -20,18 +17,18 @@ void gpio_output_mode_init()
     GPIO_Init(GPIOE, &gpio);
 }
 
-BitAction gpio_read_bit(GPIO_TypeDef *gpiox, uint16_t pin)
+FlagStatus gpio_read_bit(GPIO_TypeDef *gpiox, uint16_t pin)
 {
-    if ((gpiox->IDR & pin) != (uint32_t)Bit_RESET) {
-        return Bit_SET;
+    if ((gpiox->IDR & pin) != (uint32_t)RESET) {
+        return SET;
     } else {
-        return Bit_RESET;
+        return RESET;
     }
 }
 
-void gpio_write_bit(GPIO_TypeDef *gpiox, uint16_t pin, BitAction value)
+void gpio_write_bit(GPIO_TypeDef *gpiox, uint16_t pin, FlagStatus value)
 {
-    if (value == Bit_RESET) {
+    if (value == RESET) {
         gpiox->ODR &= ~((uint16_t)pin);
     } else {
         gpiox->ODR |= ((uint16_t)pin);

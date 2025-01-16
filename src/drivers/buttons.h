@@ -11,16 +11,10 @@ typedef enum {
     BTN_NO_4 = GPIO_Pin_11,
 } btn_no_t;
 
-typedef enum {
-    HL_MODE_1,
-    HL_MODE_2,
-    HL_MODE_3,
-    HL_MODE_4,
-} hl_mode_t;
-
 int btn_is_set(btn_no_t b);
 int btn_is_reset(btn_no_t b);
 void btn_set_prev_state(btn_no_t b, FlagStatus s);
 FlagStatus btn_get_prev_state(btn_no_t b);
+void btn_reset_leds(void);
 
 #endif // LED_HEADLIGHTS_BUTTONS_H

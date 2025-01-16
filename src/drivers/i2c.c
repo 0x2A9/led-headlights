@@ -8,7 +8,7 @@ volatile uint16_t   i2c_tx_index   = 0;
 volatile uint16_t   i2c_rx_index   = 0;
 volatile i2c_mode_t i2c_mode       = I2C_MODE_IDLE;
 
-void i2c1_init()
+void i2c1_init(void)
 {
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOB, ENABLE);     /* Enable GPIOB Clock */
 

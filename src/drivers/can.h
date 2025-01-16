@@ -7,11 +7,10 @@
 #include "stm32f30x_can.h"
 #include "stm32f30x_misc.h"
 
-extern CanTxMsg can_tx_msg;
-extern CanRxMsg can_rx_msg;
-
-void can_init();
-void can_filter_init();
+void can_init(void);
+#ifdef RX
+void can_init_filter(void);
+#endif
 
 uint8_t can_read(CAN_TypeDef* canx, uint8_t fifo_number, CanRxMsg* msg);
 uint8_t can_write(CAN_TypeDef* canx, CanTxMsg* msg);

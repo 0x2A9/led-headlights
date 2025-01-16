@@ -8,6 +8,6 @@
 #include "stm32f30x_exti.h"
 #include "stm32f30x_misc.h"
 
-void exti_init();
+void exti_init(void);
 
 #endif // LED_HEADLIGHTS_EXTI_H

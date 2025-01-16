@@ -1,23 +1,13 @@
 #include "stm32f30x_it.h"
 
+#ifdef TX
 void USB_HP_CAN1_TX_IRQHandler(void)
 {
     if (CAN_GetITStatus(CAN1, CAN_IT_TME)) {           
-        gpio_write_bit(GPIOE, LD7_COLOR_GREEN, Bit_SET);      
+        gpio_write_bit(GPIOE, LD7_COLOR_GREEN, SET);      
         CAN_ClearITPendingBit(CAN1, CAN_IT_TME);
     }
 }
-
-void CAN1_RX1_IRQHandler(void)
-{
-    gpio_write_bit(GPIOE, LD4_COLOR_BLUE, Bit_SET);
-
-    can_read(CAN1, CAN_FIFO1, &can_rx_msg);
-
-    CAN_ClearITPendingBit(CAN1, CAN_IT_FMP1);
-}
-
-#ifdef TX
 
 void EXTI9_5_IRQHandler(void)
 {
@@ -25,18 +15,18 @@ void EXTI9_5_IRQHandler(void)
         for (int i = 0; i < 0x7FFFF; i++); /* Skip bouncing, wait idle state */
 
         if (btn_is_set(BTN_NO_1)) {
-            gpio_write_bit(GPIOE, LD9_COLOR_BLUE, Bit_SET);
+            gpio_write_bit(GPIOE, LD9_COLOR_BLUE, SET);
 
             if (btn_get_prev_state(BTN_NO_1) == RESET) {
                 btn_set_prev_state(BTN_NO_1, SET);
 
-                can_tx_msg.Data[HL_MODE_4] = 0;
-                can_tx_msg.Data[HL_MODE_3] = 0;
-                can_tx_msg.Data[HL_MODE_2] = 0;
-                can_tx_msg.Data[HL_MODE_1] = 1;
+                CanTxMsg msg = {
+                    .DLC     = 1,
+                    .Data[0] = HL_STATE_1,
+                };
 
-                if (can_write(CAN1, &can_tx_msg) == CAN_TxStatus_Failed) {
-                    gpio_write_bit(GPIOE, LD3_COLOR_RED, Bit_SET);
+                if (can_write(CAN1, &msg) == CAN_TxStatus_Failed) {
+                    gpio_write_bit(GPIOE, LD3_COLOR_RED, SET);
                 }
             } 
         }    
@@ -48,18 +38,18 @@ void EXTI9_5_IRQHandler(void)
         for (int i = 0; i < 0x7FFFF; i++); /* Skip bouncing, wait idle state */
 
         if (btn_is_set(BTN_NO_2)) {
-            gpio_write_bit(GPIOE, LD8_COLOR_ORANGE, Bit_SET);
+            gpio_write_bit(GPIOE, LD8_COLOR_ORANGE, SET);
 
             if (btn_get_prev_state(BTN_NO_2) == RESET) {
                 btn_set_prev_state(BTN_NO_2, SET);
 
-                can_tx_msg.Data[HL_MODE_4] = 0;
-                can_tx_msg.Data[HL_MODE_3] = 0;
-                can_tx_msg.Data[HL_MODE_2] = 1;
-                can_tx_msg.Data[HL_MODE_1] = 0;
+                CanTxMsg msg = {
+                    .DLC     = 1,
+                    .Data[0] = HL_STATE_2,
+                };
 
-                if (can_write(CAN1, &can_tx_msg) == CAN_TxStatus_Failed) {
-                    gpio_write_bit(GPIOE, LD3_COLOR_RED, Bit_SET);
+                if (can_write(CAN1, &msg) == CAN_TxStatus_Failed) {
+                    gpio_write_bit(GPIOE, LD3_COLOR_RED, SET);
                 }
             }  
         }    
@@ -74,18 +64,18 @@ void EXTI15_10_IRQHandler(void)
         for (int i = 0; i < 0x7FFFF; i++); /* Skip bouncing, wait idle state */
 
         if (btn_is_set(BTN_NO_3)) { 
-            gpio_write_bit(GPIOE, LD4_COLOR_BLUE, Bit_SET);
+            gpio_write_bit(GPIOE, LD4_COLOR_BLUE, SET);
 
             if (btn_get_prev_state(BTN_NO_3) == RESET) {
                 btn_set_prev_state(BTN_NO_3, SET);
 
-                can_tx_msg.Data[HL_MODE_4] = 0;
-                can_tx_msg.Data[HL_MODE_3] = 1;
-                can_tx_msg.Data[HL_MODE_2] = 0;
-                can_tx_msg.Data[HL_MODE_1] = 0;
+                CanTxMsg msg = {
+                    .DLC     = 1,
+                    .Data[0] = HL_STATE_3,
+                };
 
-                if (can_write(CAN1, &can_tx_msg) == CAN_TxStatus_Failed) {
-                    gpio_write_bit(GPIOE, LD3_COLOR_RED, Bit_SET);
+                if (can_write(CAN1, &msg) == CAN_TxStatus_Failed) {
+                    gpio_write_bit(GPIOE, LD3_COLOR_RED, SET);
                 }
             }   
         } 
@@ -97,18 +87,18 @@ void EXTI15_10_IRQHandler(void)
         for (int i = 0; i < 0x7FFFF; i++); /* Skip bouncing, wait idle state */
 
         if (btn_is_set(BTN_NO_4)) {
-            gpio_write_bit(GPIOE, LD5_COLOR_ORANGE, Bit_SET);
+            gpio_write_bit(GPIOE, LD5_COLOR_ORANGE, SET);
 
             if (btn_get_prev_state(BTN_NO_4) == RESET) {
                 btn_set_prev_state(BTN_NO_4, SET);
 
-                can_tx_msg.Data[HL_MODE_4] = 1;
-                can_tx_msg.Data[HL_MODE_3] = 0;
-                can_tx_msg.Data[HL_MODE_2] = 0;
-                can_tx_msg.Data[HL_MODE_1] = 0;
+                CanTxMsg msg = {
+                    .DLC     = 1,
+                    .Data[0] = HL_STATE_4,
+                };
 
-                if (can_write(CAN1, &can_tx_msg) == CAN_TxStatus_Failed) {
-                    gpio_write_bit(GPIOE, LD3_COLOR_RED, Bit_SET);
+                if (can_write(CAN1, &msg) == CAN_TxStatus_Failed) {
+                    gpio_write_bit(GPIOE, LD3_COLOR_RED, SET);
                 }
             }  
         }    
@@ -116,8 +106,20 @@ void EXTI15_10_IRQHandler(void)
         EXTI_ClearITPendingBit(EXTI_Line11);
     }   
 }
+#else
+void CAN1_RX1_IRQHandler(void)
+{
+    gpio_write_bit(GPIOE, LD7_COLOR_GREEN, SET);
 
-#endif
+    CanRxMsg msg;
+    memset(&msg.Data, RESET, sizeof(msg.Data));
+
+    can_read(CAN1, CAN_FIFO1, &msg);
+
+    state_machine_upd_state(msg.Data);
+
+    CAN_ClearITPendingBit(CAN1, CAN_IT_FMP1);
+}
 
 void I2C1_EV_IRQHandler(void)
 {
@@ -178,3 +180,4 @@ void I2C1_ER_IRQHandler(void)
         i2c_mode = I2C_MODE_IDLE;
     }
 }
+#endif

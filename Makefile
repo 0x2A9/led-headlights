@@ -32,7 +32,8 @@ SOURCES = src/tx/main.c \
 else ifeq ($(TARGET_NAME),RX)
 TARGET = $(BUILD_DIR)/rx
 SOURCES = src/rx/main.c \
-          src/drivers/pca9685.c 
+          src/drivers/pca9685.c \
+          src/app/state_machine.c
 endif
 
 SOURCES += src/drivers/gpio.c \

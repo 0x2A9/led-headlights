@@ -1,6 +1,6 @@
 #include "exti.h"
 
-void exti_init() 
+void exti_init(void) 
 {
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOD, ENABLE);
 
@@ -8,7 +8,7 @@ void exti_init()
 
     gpio.GPIO_Mode = GPIO_Mode_IN;
     gpio.GPIO_PuPd = GPIO_PuPd_DOWN;
-    gpio.GPIO_Pin  = GPIO_Pin_8 | GPIO_Pin_9 
+    gpio.GPIO_Pin  = GPIO_Pin_8  | GPIO_Pin_9 
                    | GPIO_Pin_10 | GPIO_Pin_11;
 
     GPIO_Init(GPIOD, &gpio);

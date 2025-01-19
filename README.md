@@ -1,3 +1,14 @@
+## Description
+The project consists of a **CAN transmitter* (hereinafter CAN TX), **CAN receivers** (hereinafter CAN RX), **buttons**, **PWM chips** and **outer LEDs**
+- The **CAN transmitter** is connected to the **buttons**. There are **4** buttons to select a *mode* of the headlights. Each button corresponds to the particular mode
+- The **CAN TX** sends messages to a queue, that is read by each **CAN RX**
+- The **CAN RX** processes the mode from the message and provides this info to the **PWM chip**
+- The **PWM chip** coordinates the **LEDs**
+
+
+## Schema
+<img src="./docs/e_schema.png">
+
 ## Installation
 - Download the **Standard Peripheral Library Expansion** for the `STM32F303VCT6` MCU
 - Download the special **GCC** compiler for the **ARM** architecture

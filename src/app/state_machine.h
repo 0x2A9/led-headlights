@@ -13,7 +13,7 @@ typedef enum {
 
 typedef void (*hl_state_fn_t)(void);
 
-void state_machine_upd_state(uint8_t data[8]);
+void state_machine_upd_state(const uint8_t data[8]);
 void state_machine_run(void);
 
 #endif // LED_HEADLIGHTS_STATE_MACHINE_H

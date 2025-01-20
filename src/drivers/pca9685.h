@@ -1,7 +1,8 @@
 #ifndef LED_HEADLIGHTS_PCA9685_H
 #define LED_HEADLIGHTS_PCA9685_H
 
-#include "i2c.h"
+#include "common/assert.h"
+#include "drivers/i2c.h"
 #include <string.h>
 
 #define PCA9685_ADDR_7BIT         0x40    /* PCA9685 I2C address */
@@ -40,7 +41,7 @@ pca9685_status_t pca9685_read_reg(uint8_t reg_addr,
                                   uint8_t *b_data, 
                                   uint16_t size);
 pca9685_status_t pca9685_write_reg(uint8_t reg_addr, 
-                                   uint8_t *b_data, 
+                                   const uint8_t *b_data, 
                                    uint16_t size);
 
 pca9685_status_t pca9685_i2c_wait_util_idle(void);

@@ -2,8 +2,13 @@
 
 void pca9685_init(uint16_t frequency)
 {
-    pca9685_set_pwm_frequency(frequency);
-    pca9685_set_bit(PCA9685_MODE1, PCA9685_MODE1_AI_BIT, 1);
+    pca9685_status_t set_pwm_status = pca9685_set_pwm_frequency(frequency);
+
+    ASSERT(set_pwm_status == PCA9685_STATUS_OK);
+
+    pca9685_status_t set_bit_status = pca9685_set_bit(PCA9685_MODE1, PCA9685_MODE1_AI_BIT, 1);
+
+    ASSERT(set_bit_status == PCA9685_STATUS_OK);
 }
 
 pca9685_status_t pca9685_set_pwm_frequency(uint16_t frequency)
@@ -76,7 +81,7 @@ pca9685_status_t pca9685_set_pwm(uint8_t channel,
     return pca9685_write_reg(reg_addr, pwm_data, 4);
 }
 
-pca9685_status_t pca9685_write_reg(uint8_t reg_addr, uint8_t *b_data, uint16_t size)
+pca9685_status_t pca9685_write_reg(uint8_t reg_addr, const uint8_t *b_data, uint16_t size)
 {
     if ((size + 1) > PCA9685_I2C_BUFFER_SIZE) {
         return PCA9685_STATUS_ERROR;

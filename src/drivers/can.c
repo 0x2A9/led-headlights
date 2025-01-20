@@ -39,7 +39,9 @@ void can_init(void)
     can.CAN_BS2       = CAN_BS2_1tq; 
     can.CAN_Prescaler = 72;
 
-    CAN_Init(CAN1, &can);
+    uint8_t can_init_status = CAN_Init(CAN1, &can);
+
+    ASSERT(CAN_TxStatus_Ok == can_init_status);
 
     /* 3. NVIC Config */
     NVIC_InitTypeDef nvic;

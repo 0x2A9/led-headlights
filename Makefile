@@ -39,7 +39,8 @@ endif
 SOURCES += src/drivers/gpio.c \
            src/drivers/can.c \
            src/drivers/i2c.c \
-           src/drivers/stm32f30x_it.c
+           src/drivers/stm32f30x_it.c \
+           src/common/assert.c
 
 SOURCES += $(STM_LIB_DIR)/Libraries/CMSIS/Device/ST/STM32F30x/Source/Templates/TrueSTUDIO/startup_stm32f30x.s \
            $(SYSTEM_SCRIPT_DIR)/system_stm32f30x.c
@@ -69,12 +70,16 @@ CFLAGS += -I$(STM_LIB_DIR)/Project/Demonstration
 CFLAGS += -Isrc
 CFLAGS += -D$(TARGET_NAME) # global define to access it from the multiple compilation units
 
+ifeq ($(USE_ASSERTS), 1)
+    CFLAGS += -DUSE_ASSERTS
+endif
+
 # ENV VARIABLES
 # Path to a dynamic ST-Link library
 LD_LIBRARY_PATH=$(STL_DIR)/build/Release/lib
 
 # PHONIES
-.PHONY: all clean flash
+.PHONY: all clean flash check
 
 # COMMANDS
 all: $(TARGET).elf
@@ -89,3 +94,17 @@ clean:
 
 flash: $(TARGET).elf
 	$(STL_DIR)/st-flash write $(TARGET).bin 0x08000000
+
+check:
+	cppcheck \
+        --enable=all \
+        --force \
+        --std=c11 \
+        -I./src \
+        -I./src/drivers \
+        -I./src/app \
+        -I./src/common \
+        -DSTM32F30x \
+        -D__weak= \
+        -D__IO= \
+        ./src

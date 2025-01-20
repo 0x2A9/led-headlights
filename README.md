@@ -1,5 +1,5 @@
 ## Description
-The project consists of a **CAN transmitter* (hereinafter CAN TX), **CAN receivers** (hereinafter CAN RX), **buttons**, **PWM chips** and **outer LEDs**
+The project consists of a **CAN transmitter** (hereinafter CAN TX), **CAN receivers** (hereinafter CAN RX), **buttons**, **PWM chips** and **outer LEDs**
 - The **CAN transmitter** is connected to the **buttons**. There are **4** buttons to select a *mode* of the headlights. Each button corresponds to the particular mode
 - The **CAN TX** sends messages to a queue, that is read by each **CAN RX**
 - The **CAN RX** processes the mode from the message and provides this info to the **PWM chip**
@@ -27,7 +27,7 @@ The project consists of a **CAN transmitter* (hereinafter CAN TX), **CAN receive
         export STM_LIB_DIR=<path-to-dir-with-spl/STM32F3-Discovery_FW_V1.1.0
 
     ```
-- Check everithing is installed correctly by running:
+- Check everything is installed correctly by running:
     ```
         arm-none-eabi-gcc --version
         st-info --version
@@ -46,3 +46,10 @@ The project consists of a **CAN transmitter* (hereinafter CAN TX), **CAN receive
         make flash TARGET_NAME=TX
         make flash TARGET_NAME=RX
     ```
+
+## Static Analysis
+- Download `cppcheck` version `2.13.0`
+- To perform code static analysis run `make check TARGET_NAME=<TX|RX>`
+
+## Asserts
+User can enable/disable asserts in the project by providing `USE_ASSERTS` building parameter. For example: `make TARGET_NAME=RX USE_ASSERTS=1`

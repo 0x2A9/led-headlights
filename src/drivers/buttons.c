@@ -6,16 +6,22 @@ static volatile uint8_t btn_prev_states = ((uint8_t)0x00);
 
 int btn_is_set(btn_no_t b)
 {
+    ASSERT_BTN_NO(b);
+
     return gpio_read_bit(GPIOD, b) == SET;
 }
 
 int btn_is_reset(btn_no_t b)
 {
+    ASSERT_BTN_NO(b);
+
     return gpio_read_bit(GPIOD, b) == RESET;
 }
 
 void btn_set_prev_state(btn_no_t b, FlagStatus s)
 {
+    ASSERT_BTN_NO(b);
+
     if (SET == s) {
         btn_prev_states |= ((uint8_t)(b >> BTN_OFFSET));
     } else {
@@ -25,7 +31,9 @@ void btn_set_prev_state(btn_no_t b, FlagStatus s)
 
 FlagStatus btn_get_prev_state(btn_no_t b)
 {
-    return btn_prev_states & ((uint8_t)(b >> BTN_OFFSET))
+    ASSERT_BTN_NO(b);
+
+    return (btn_prev_states & ((uint8_t)(b >> BTN_OFFSET)))
         ? SET 
         : RESET;
 }

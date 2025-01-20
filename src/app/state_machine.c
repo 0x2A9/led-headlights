@@ -27,7 +27,7 @@ volatile hl_state_t current_state = HL_STATE_1;
 
 static hl_state_t get_current_state(void);
 static void set_current_state(hl_state_t m);
-static hl_state_t detect_next_state(uint8_t data[8]);
+static hl_state_t detect_next_state(const uint8_t data[8]);
 static hl_state_fn_t get_state_fn(hl_state_t m);
 
 static hl_state_t get_current_state(void)
@@ -40,7 +40,7 @@ static void set_current_state(hl_state_t m)
     current_state = m;
 }
 
-static hl_state_t detect_next_state(uint8_t data[8])
+static hl_state_t detect_next_state(const uint8_t data[8])
 {
     if (data[0] == HL_STATE_1) {
         return HL_STATE_1;
@@ -66,7 +66,7 @@ static hl_state_fn_t get_state_fn(hl_state_t m)
     return state_fns[m];
 }
 
-void state_machine_upd_state(uint8_t data[8])
+void state_machine_upd_state(const uint8_t data[8])
 {
     set_current_state(detect_next_state(data));
 }

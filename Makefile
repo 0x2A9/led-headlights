@@ -1,26 +1,22 @@
-# CHECK ARGS
+# ---- Check args ----
 ifndef TARGET_NAME
 $(error "Must pass TARGET_NAME=TX or TARGET_NAME=RX")
 endif
 
-# TOOLCHAIN
+# Toolchain
 CC = arm-none-eabi-gcc
 OBJCOPY = arm-none-eabi-objcopy
 
-# DIRECTORIES
+# Directories
 LINKER_SCRIPT_DIR = $(STM_LIB_DIR)/Project/Peripheral_Examples/FLASH_Program/TrueSTUDIO/FLASH_Program
 SYSTEM_SCRIPT_DIR = $(STM_LIB_DIR)/Project/Peripheral_Examples/FLASH_Program
 BUILD_DIR = build
-
-ifndef STL_DIR
-$(error "STL_DIR must be specified")
-endif
 
 ifndef STM_LIB_DIR
 $(error "STM_LIB_DIR must be specified")
 endif
 
-# FILES
+# ---- Sources ----
 ifeq ($(TARGET_NAME),TX) 
 TARGET = $(BUILD_DIR)/tx
 SOURCES = src/tx/main.c \
@@ -55,7 +51,7 @@ OBJECTS = $(SRCS:.c=.o)
 
 vpath %.c $(STM_LIB_DIR)/Libraries/STM32F30x_StdPeriph_Driver/src \
 
-# FLAGS
+# ---- Flags ----
 CFLAGS  = --specs=nosys.specs
 CFLAGS += -g -O2 -Wall -T$(LINKER_SCRIPT_DIR)/STM32_FLASH.ld
 CFLAGS += -DUSE_STDPERIPH_DRIVER
@@ -74,14 +70,11 @@ ifeq ($(USE_ASSERTS), 1)
     CFLAGS += -DUSE_ASSERTS
 endif
 
-# ENV VARIABLES
-# Path to a dynamic ST-Link library
-LD_LIBRARY_PATH=$(STL_DIR)/build/Release/lib
-
-# PHONIES
+# -------------------------
+# Targets
+# -------------------------
 .PHONY: all clean flash check
 
-# COMMANDS
 all: $(TARGET).elf
 
 $(TARGET).elf: $(SOURCES)
@@ -93,7 +86,7 @@ clean:
 	rm -f *.o $(TARGET).elf $(TARGET).hex $(TARGET).bin
 
 flash: $(TARGET).elf
-	$(STL_DIR)/st-flash write $(TARGET).bin 0x08000000
+	st-flash write $(TARGET).bin 0x08000000
 
 check:
 	cppcheck \

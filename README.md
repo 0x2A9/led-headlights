@@ -9,28 +9,20 @@ The project consists of a **CAN transmitter** (hereinafter CAN TX), **CAN receiv
 <img src="./docs/e_schema.png">
 
 # Set Up
-- Download the **Standard Peripheral Library Expansion** for the `STM32F303VCT6` MCU
-- Download the special **GCC** compiler for the **ARM** architecture
-- Download the latest release of the `stlink` repository 
-- Build `st-info` and `st-flash` binaries using `stlink` repository code
-- Add to the `.zshrc` or `.bashrc` the following variables:
-	```
-	# GCC ARM path 
-	export PATH=$PATH:<path-to-dir-with-toolchain>/arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-eabi/bin
-
-	# ST-Link path 
-	export STL_DIR=<path-to-dir-with-st-link>/stlink-1.8.0
-	export PATH=$PATH:<path-to-dir-with-st-link>/stlink-1.8.0
-
-	# STM32 SPL path
-	export STM_LIB_DIR=<path-to-dir-with-spl/STM32F3-Discovery_FW_V1.1.0
-	```
+- Download the special ```arm-none-eabi``` ```13.2.1``` toolchain for the **ARM** architecture
+    ```bash
+    sudo apt install gcc-arm-none-eabi gdb-arm-none-eabi
+    ```
+- Download ```.deb``` ```1.8.0``` release of the `stlink` [repository](https://github.com/stlink-org/stlink/releases) and install:
+    ```bash
+    sudo dpkg -i stlink_1.8.0-1_amd64.deb
+    ```
 - Check everything is installed correctly by running:
 	```bash
 	arm-none-eabi-gcc --version
 	st-info --version
+    st-flash --version
 	```
-
 
 # Build
 - To build **elf**, **bin** and **hex** files run `make` command with the `TARGET_NAME` argument. Set `TX` value to compile code of the transmitter, `RX` - for receiver.

@@ -13,6 +13,7 @@ The project consists of a **CAN transmitter** (hereinafter CAN TX), **CAN receiv
     ```bash
     sudo apt install gcc-arm-none-eabi gdb-arm-none-eabi
     ```
+- In case ```apt``` contains an old version, use an official [web page](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads). Search for the ```x86_64 Linux hosted cross toolchains``` and ```AArch32 bare-metal target (arm-none-eabi)```
 - Download ```.deb``` ```1.8.0``` release of the `stlink` [repository](https://github.com/stlink-org/stlink/releases) and install:
     ```bash
     sudo dpkg -i stlink_1.8.0-1_amd64.deb
